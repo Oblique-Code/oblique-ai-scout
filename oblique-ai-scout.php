@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Oblique AI Scout
- * Plugin URI:  https://obliquecode.com/ai-scout
+ * Plugin URI:  https://github.com/Oblique-Code/oblique-ai-scout
  * Description: Monitor AI crawler activity on your WordPress site. Detects 56+ bots including GPTBot, ClaudeBot, PerplexityBot, Gemini, and more — all with zero external API calls.
  * Version:     1.0.0
  * Author:      Oblique Code
- * Author URI:  https://obliquecode.com
+ * Author URI:  https://github.com/Oblique-Code
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: oblique-ai-scout
