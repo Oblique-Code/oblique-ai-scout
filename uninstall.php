@@ -16,10 +16,13 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 global $wpdb;
 
 // Drop custom database tables.
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- required for uninstall cleanup.
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oblique_ai_hits" );
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- required for uninstall cleanup.
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oblique_ai_requests" );
 
 // Legacy table from v1.0.0.
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- required for uninstall cleanup.
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oblique_ai_log" );
 
 // Delete plugin options.
@@ -37,6 +40,6 @@ wp_clear_scheduled_hook( 'oblique_prune_logs' );
 delete_transient( 'oblique_ai_scout_robots_txt' );
 
 // Delete blind spot transients (various day values).
-foreach ( array( 7, 30, 90, 365 ) as $days ) {
-	delete_transient( 'oblique_ai_scout_blindspots_' . $days );
+foreach ( array( 7, 30, 90, 365 ) as $oblique_days ) {
+	delete_transient( 'oblique_ai_scout_blindspots_' . $oblique_days );
 }

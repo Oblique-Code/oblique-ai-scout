@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Handle purge action.
-$purge_notice = '';
+$oblique_purge_notice = '';
 if ( isset( $_POST['oblique_purge'] ) && '1' === $_POST['oblique_purge'] ) {
 	check_admin_referer( 'oblique_settings_action', 'oblique_settings_nonce' );
 
@@ -22,31 +22,31 @@ if ( isset( $_POST['oblique_purge'] ) && '1' === $_POST['oblique_purge'] ) {
 		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}oblique_ai_requests" );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}oblique_ai_hits" );
-		$purge_notice = __( 'All log data has been purged.', 'oblique-ai-scout' );
+		$oblique_purge_notice = __( 'All log data has been purged.', 'oblique-ai-scout' );
 	}
 }
 
 // robots.txt data.
-$bot_statuses = Oblique_Robots_Checker::get_all_bot_statuses();
+$oblique_bot_statuses = Oblique_Robots_Checker::get_all_bot_statuses();
 
 // Detect caching plugin.
-$detected_cache = '';
+$oblique_detected_cache = '';
 if ( defined( 'WP_ROCKET_VERSION' ) ) {
-	$detected_cache = 'WP Rocket';
+	$oblique_detected_cache = 'WP Rocket';
 } elseif ( defined( 'LSCWP_V' ) || defined( 'LSCWP_VERSION' ) ) {
-	$detected_cache = 'LiteSpeed Cache';
+	$oblique_detected_cache = 'LiteSpeed Cache';
 } elseif ( defined( 'W3TC' ) ) {
-	$detected_cache = 'W3 Total Cache';
+	$oblique_detected_cache = 'W3 Total Cache';
 } elseif ( defined( 'WPCACHEHOME' ) ) {
-	$detected_cache = 'WP Super Cache';
+	$oblique_detected_cache = 'WP Super Cache';
 }
 
 // DB stats.
-$total_requests = Oblique_Logger::get_total_all();
-$total_bots     = count( Oblique_Logger::get_logged_bot_names() );
+$oblique_total_requests = Oblique_Logger::get_total_all();
+$oblique_total_bots     = count( Oblique_Logger::get_logged_bot_names() );
 
 // Bot patterns.
-$bot_patterns = array(
+$oblique_bot_patterns = array(
 	'gptbot', 'chatgpt-user', 'oai-searchbot',
 	'claudebot', 'claude-web', 'claude-searchbot',
 	'perplexitybot', 'google-extended', 'gemini-deep-research',
@@ -75,8 +75,8 @@ $bot_patterns = array(
 		</div>
 	</div>
 
-	<?php if ( '' !== $purge_notice ) : ?>
-		<div class="notice notice-success is-dismissible"><p><?php echo esc_html( $purge_notice ); ?></p></div>
+	<?php if ( '' !== $oblique_purge_notice ) : ?>
+		<div class="notice notice-success is-dismissible"><p><?php echo esc_html( $oblique_purge_notice ); ?></p></div>
 	<?php endif; ?>
 
 	<div class="oais-settings-grid">
@@ -92,11 +92,11 @@ $bot_patterns = array(
 				<div class="oais-panel__body">
 					<div class="oais-data-stats">
 						<div class="oais-data-stat">
-							<span class="oais-data-stat__val"><?php echo esc_html( number_format_i18n( $total_requests ) ); ?></span>
+							<span class="oais-data-stat__val"><?php echo esc_html( number_format_i18n( $oblique_total_requests ) ); ?></span>
 							<span class="oais-data-stat__lbl"><?php echo esc_html__( 'Logged Requests', 'oblique-ai-scout' ); ?></span>
 						</div>
 						<div class="oais-data-stat">
-							<span class="oais-data-stat__val"><?php echo esc_html( number_format_i18n( $total_bots ) ); ?></span>
+							<span class="oais-data-stat__val"><?php echo esc_html( number_format_i18n( $oblique_total_bots ) ); ?></span>
 							<span class="oais-data-stat__lbl"><?php echo esc_html__( 'Unique Bots', 'oblique-ai-scout' ); ?></span>
 						</div>
 						<div class="oais-data-stat">
@@ -106,7 +106,7 @@ $bot_patterns = array(
 					</div>
 
 					<?php
-					$export_url = add_query_arg(
+					$oblique_export_url = add_query_arg(
 						array(
 							'page'           => 'oblique-ai-scout',
 							'oblique_export' => '1',
@@ -116,7 +116,7 @@ $bot_patterns = array(
 					);
 					?>
 					<div class="oais-data-actions">
-						<a href="<?php echo esc_url( $export_url ); ?>" class="button">
+						<a href="<?php echo esc_url( $oblique_export_url ); ?>" class="button">
 							📥 <?php echo esc_html__( 'Export All as CSV', 'oblique-ai-scout' ); ?>
 						</a>
 
@@ -141,13 +141,13 @@ $bot_patterns = array(
 					<h2>⚡ <?php echo esc_html__( 'Cache Exclusion', 'oblique-ai-scout' ); ?></h2>
 				</div>
 				<div class="oais-panel__body">
-					<?php if ( '' !== $detected_cache ) : ?>
+					<?php if ( '' !== $oblique_detected_cache ) : ?>
 						<div class="oais-notice oais-notice--info">
 							<?php
 							printf(
 								/* translators: %s = cache plugin name. */
 								esc_html__( '%s detected on your site. Add the bot patterns below to its "excluded user agents" setting for accurate tracking.', 'oblique-ai-scout' ),
-								'<strong>' . esc_html( $detected_cache ) . '</strong>'
+								'<strong>' . esc_html( $oblique_detected_cache ) . '</strong>'
 							);
 							?>
 						</div>
@@ -155,7 +155,7 @@ $bot_patterns = array(
 						<p><?php echo esc_html__( 'If you use a caching plugin, exclude AI bot user agents so visits reach PHP and get tracked.', 'oblique-ai-scout' ); ?></p>
 					<?php endif; ?>
 
-					<div class="oais-ua-box" id="oblique-ua-patterns"><?php echo esc_html( implode( "\n", $bot_patterns ) ); ?></div>
+					<div class="oais-ua-box" id="oblique-ua-patterns"><?php echo esc_html( implode( "\n", $oblique_bot_patterns ) ); ?></div>
 
 					<button class="button button-primary" id="oblique-copy-btn">
 						📋 <?php echo esc_html__( 'Copy Patterns', 'oblique-ai-scout' ); ?>
@@ -181,38 +181,38 @@ $bot_patterns = array(
 				<div class="oais-panel__body oais-panel__body--flush">
 					<div class="oais-robots-list">
 						<?php
-						$allowed_count = 0;
-						$blocked_count = 0;
-						foreach ( $bot_statuses as $status ) {
-							if ( 'allowed' === $status['status'] ) {
-								$allowed_count++;
-							} elseif ( 'blocked' === $status['status'] ) {
-								$blocked_count++;
+						$oblique_allowed_count = 0;
+						$oblique_blocked_count = 0;
+						foreach ( $oblique_bot_statuses as $oblique_status ) {
+							if ( 'allowed' === $oblique_status['status'] ) {
+								$oblique_allowed_count++;
+							} elseif ( 'blocked' === $oblique_status['status'] ) {
+								$oblique_blocked_count++;
 							}
 						}
 						?>
 
 						<div class="oais-robots-summary">
 							<span class="oais-robots-summary__item oais-robots-summary__item--ok">
-								✅ <?php echo esc_html( $allowed_count . ' ' . __( 'allowed', 'oblique-ai-scout' ) ); ?>
+								✅ <?php echo esc_html( $oblique_allowed_count . ' ' . __( 'allowed', 'oblique-ai-scout' ) ); ?>
 							</span>
 							<span class="oais-robots-summary__item oais-robots-summary__item--blocked">
-								🚫 <?php echo esc_html( $blocked_count . ' ' . __( 'blocked', 'oblique-ai-scout' ) ); ?>
+								🚫 <?php echo esc_html( $oblique_blocked_count . ' ' . __( 'blocked', 'oblique-ai-scout' ) ); ?>
 							</span>
 						</div>
 
-						<?php foreach ( $bot_statuses as $bot_name => $status ) :
-							$dot_class = 'oais-dot--unknown';
-							if ( 'allowed' === $status['status'] ) {
-								$dot_class = 'oais-dot--ok';
-							} elseif ( 'blocked' === $status['status'] ) {
-								$dot_class = 'oais-dot--blocked';
+						<?php foreach ( $oblique_bot_statuses as $oblique_bot_name => $oblique_status ) :
+							$oblique_dot_class = 'oais-dot--unknown';
+							if ( 'allowed' === $oblique_status['status'] ) {
+								$oblique_dot_class = 'oais-dot--ok';
+							} elseif ( 'blocked' === $oblique_status['status'] ) {
+								$oblique_dot_class = 'oais-dot--blocked';
 							}
 							?>
 							<div class="oais-robots-row">
-								<span class="oais-dot <?php echo esc_attr( $dot_class ); ?>"></span>
-								<span class="oais-robots-row__name"><?php echo esc_html( $bot_name ); ?></span>
-								<span class="oais-robots-row__status"><?php echo esc_html( ucfirst( $status['status'] ) ); ?></span>
+								<span class="oais-dot <?php echo esc_attr( $oblique_dot_class ); ?>"></span>
+								<span class="oais-robots-row__name"><?php echo esc_html( $oblique_bot_name ); ?></span>
+								<span class="oais-robots-row__status"><?php echo esc_html( ucfirst( $oblique_status['status'] ) ); ?></span>
 							</div>
 						<?php endforeach; ?>
 					</div>

@@ -175,9 +175,10 @@ function oblique_ai_scout_cleanup_old_data() {
 	$days_to_keep   = (int) apply_filters( 'oblique_ai_scout_days_to_keep', OBLIQUE_AI_SCOUT_CLEANUP_DAYS );
 	$requests_table = $wpdb->prefix . 'oblique_ai_requests';
 
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 	$wpdb->query(
 		$wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe ($wpdb->prefix).
 			"DELETE FROM {$requests_table} WHERE hit_at < DATE_SUB(NOW(), INTERVAL %d DAY) LIMIT 1000",
 			$days_to_keep
 		)
@@ -202,16 +203,3 @@ function oblique_ai_scout_action_links( $links ) {
 	return $links;
 }
 
-/**
- * Load plugin text domain.
- */
-add_action( 'init', 'oblique_ai_scout_load_textdomain' );
-
-/**
- * Load translations.
- *
- * @return void
- */
-function oblique_ai_scout_load_textdomain() {
-	load_plugin_textdomain( 'oblique-ai-scout', false, dirname( OBLIQUE_AI_SCOUT_PLUGIN_BASENAME ) . '/languages' );
-}

@@ -1,14 +1,14 @@
 === Oblique AI Scout ===
-Contributors: obliquecode
-Tags: ai, crawler, bot, analytics, gptbot, claudebot, perplexity, tracking, llm
+Contributors: obliquecode, nurulanam
+Tags: ai, crawler, bot, analytics, tracking
 Requires at least: 5.8
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Track 56+ AI crawler visits to your WordPress site — GPTBot, ClaudeBot, PerplexityBot, Gemini, DeepSeek, and more. Zero external APIs. Your data stays local.
+Track 56+ AI crawler visits — GPTBot, ClaudeBot, Gemini, and more. Privacy-first, zero external APIs.
 
 == Description ==
 

@@ -32,14 +32,16 @@ class Oblique_CSV_Exporter {
 	 * @return void
 	 */
 	public static function maybe_export() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- nonce checked in handle_export().
 		if (
 			! isset( $_GET['oblique_export'] ) ||
-			'1' !== $_GET['oblique_export'] ||
+			'1' !== sanitize_text_field( wp_unslash( $_GET['oblique_export'] ) ) ||
 			! isset( $_GET['page'] ) ||
-			'oblique-ai-scout' !== $_GET['page']
+			'oblique-ai-scout' !== sanitize_text_field( wp_unslash( $_GET['page'] ) )
 		) {
 			return;
 		}
+		// phpcs:enable
 
 		self::handle_export();
 	}
@@ -66,10 +68,10 @@ class Oblique_CSV_Exporter {
 		global $wpdb;
 		$table = Oblique_Logger::get_requests_table();
 
-		// Collect filters.
+		// Collect filters with proper sanitization.
 		$filters = array();
 		foreach ( array( 'bot', 'path', 'ip', 'from', 'to' ) as $key ) {
-			if ( isset( $_GET[ $key ] ) && '' !== trim( $_GET[ $key ] ) ) {
+			if ( isset( $_GET[ $key ] ) && '' !== trim( sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) ) ) {
 				$filters[ $key ] = sanitize_text_field( wp_unslash( $_GET[ $key ] ) );
 			}
 		}
@@ -78,15 +80,16 @@ class Oblique_CSV_Exporter {
 		$where_parts = ! empty( $query_parts['where'] ) ? $query_parts['where'] : array( '1=1' );
 		$args        = $query_parts['args'];
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe ($wpdb->prefix).
 		$sql = 'SELECT hit_at, bot_name, url_path, ip_address, user_agent FROM ' . $table
 			. ' WHERE ' . implode( ' AND ', $where_parts )
 			. ' ORDER BY id DESC LIMIT ' . OBLIQUE_AI_SCOUT_MAX_EXPORT_ROWS;
 
 		if ( ! empty( $args ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$rows = $wpdb->get_results( $wpdb->prepare( $sql, $args ) );
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$rows = $wpdb->get_results( $sql );
 		}
 
@@ -108,6 +111,7 @@ class Oblique_CSV_Exporter {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- writing to php://output stream, not a real file.
 		$output = fopen( 'php://output', 'w' );
 
 		// Header row.
@@ -151,6 +155,7 @@ class Oblique_CSV_Exporter {
 			}
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- closing php://output stream, not a real file.
 		fclose( $output );
 		exit;
 	}
